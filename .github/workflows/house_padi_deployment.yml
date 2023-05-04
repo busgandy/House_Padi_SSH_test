@@ -1,4 +1,4 @@
-name: Deploy Next.js app
+name: Deploy to Production
 
 on:
   push:
@@ -11,28 +11,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
 #       - name: Install dependencies
 #         run: npm install
-
-      - name: Run tests
+#       - name: Run tests
+#         run: npm run test
+      - name: Stop production app
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_SSH_PORT }}
           script: |
             cd /home
-            touch test_passed.txt
-
-      - name: Start app
+            touch stopped.txt
+      - name: Deploy to production
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_SSH_PORT }}
           script: |
             cd /home
-            touch deployment_passed.txt
+            touch deploy.txt
